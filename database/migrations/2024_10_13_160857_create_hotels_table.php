@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('thumbnail')->nullable();
             $table->unsignedBigInteger('country_id')->nullable();
             $table->unsignedBigInteger('city_id')->nullable();
-            $table->unsignedBigInteger('start_level')->nullable();
+            $table->unsignedBigInteger('star_level')->nullable();
             $table->string('address')->nullable();
             $table->string('gmaps')->nullable();
             $table->string('slug')->nullable();
