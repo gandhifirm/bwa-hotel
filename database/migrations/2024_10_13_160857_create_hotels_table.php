@@ -19,6 +19,7 @@ return new class extends Migration
             $table->unsignedBigInteger('city_id')->nullable();
             $table->unsignedBigInteger('start_level')->nullable();
             $table->string('address')->nullable();
+            $table->string('gmaps')->nullable();
             $table->string('slug')->nullable();
             $table->softDeletes();
             $table->timestamps();
