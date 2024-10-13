@@ -17,6 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('hotel_id')->nullable();
             $table->date('checkin_date')->nullable();
             $table->date('checkout_date')->nullable();
+            $table->unsignedBigInteger('total_days')->nullable();
             $table->unsignedBigInteger('total_amount')->nullable();
             $table->boolean('is_paid')->nullable()->default(false);
             $table->string('proof')->nullable();
