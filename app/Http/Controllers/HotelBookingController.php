@@ -12,7 +12,7 @@ class HotelBookingController extends Controller
      */
     public function index()
     {
-        //
+        return view('admin.hotel_bookings.index');
     }
 
     /**
