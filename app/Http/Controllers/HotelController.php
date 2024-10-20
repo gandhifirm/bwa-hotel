@@ -2,8 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreHotelRequest;
+use App\Models\City;
+use App\Models\Country;
 use App\Models\Hotel;
+use App\Models\HotelRoom;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class HotelController extends Controller
 {
@@ -12,7 +17,8 @@ class HotelController extends Controller
      */
     public function index()
     {
-        return view('admin.hotels.index');
+        $hotels = Hotel::with('hotel_photos')->orderByDesc('id')->get();
+        return view('admin.hotels.index', compact(['hotels']));
     }
 
     /**
@@ -20,15 +26,38 @@ class HotelController extends Controller
      */
     public function create()
     {
-        //
+        $countries = Country::orderBy('name')->get();
+        $cities = City::orderBy('name')->get();
+        return view('admin.hotels.create', compact(['countries', 'cities']));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreHotelRequest $request)
     {
-        //
+        DB::transaction(function() use ($request) {
+            $validated = $request->validated();
+
+            if ($request->hasFile('thumbnail')) {
+                $thumbnailPath = $request->file('thumbnail')->store('hotel-thumbnails', 'public');
+                $validated['thumbnail'] = $thumbnailPath;
+            }
+
+            $hotel = Hotel::create($validated);
+
+            if ($request->hasFile('photos')) {
+                foreach ($request->file('photos') as $photo) {
+                    $photoPath = $photo->store('hotel-photos', 'public');
+                    $validated['photo'] = $photoPath;
+                    $hotel->hotel_photos()->create([
+                        'photo' => $photoPath
+                    ]);
+                }
+            }
+        });
+
+        return redirect()->route('hotels.index');
     }
 
     /**
@@ -36,7 +65,8 @@ class HotelController extends Controller
      */
     public function show(Hotel $hotel)
     {
-        //
+        $latestPhotos = $hotel->hotel_photos()->orderByDesc('id')->take(3)->get();
+        return view('admin.hotels.show', compact(['latestPhotos', 'hotel']));
     }
 
     /**

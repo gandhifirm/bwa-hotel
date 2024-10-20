@@ -26,4 +26,10 @@ class StoreCityRequest extends FormRequest
             'name'  => ['required', 'string', 'max:255', 'unique:'.City::class]
         ];
     }
+
+    public function messages() {
+        return [
+            'name.required' => 'Mohon isi nama hotel terlebih dahulu'
+        ];
+    }
 }

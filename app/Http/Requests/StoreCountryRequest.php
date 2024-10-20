@@ -26,4 +26,12 @@ class StoreCountryRequest extends FormRequest
             'name'  => ['required', 'string', 'max:255', 'unique:'.Country::class]
         ];
     }
+
+    public function messages()
+    {
+        return [
+            'name.required' => 'Silahkan isi nama negara terlebih dahulu',
+            'name.unique'   => 'Nama negara telah terdaftar. Buat nama negara lain.'
+        ];
+    }
 }
