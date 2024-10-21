@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreHotelRequest;
+use App\Http\Requests\UpdateHotelRequest;
 use App\Models\City;
 use App\Models\Country;
 use App\Models\Hotel;
-use App\Models\HotelRoom;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -74,15 +74,38 @@ class HotelController extends Controller
      */
     public function edit(Hotel $hotel)
     {
-        //
+        $countries = Country::orderBy('name')->get();
+        $cities = City::orderBy('name')->get();
+        return view('admin.hotels.edit', compact('countries', 'cities', 'hotel'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Hotel $hotel)
+    public function update(UpdateHotelRequest $request, Hotel $hotel)
     {
-        //
+        DB::transaction(function() use ($request, $hotel) {
+            $validated = $request->validated();
+
+            if ($request->hasFile('thumbnail')) {
+                $thumbnailPath = $request->file('thumbnail')->store('hotel-thumbnails', 'public');
+                $validated['thumbnail'] = $thumbnailPath;
+            }
+
+            $hotel->update($validated);
+
+            if ($request->hasFile('photos')) {
+                foreach ($request->file('photos') as $photo) {
+                    $photoPath = $photo->store('hotel-photos', 'public');
+                    $validated['photo'] = $photoPath;
+                    $hotel->hotel_photos()->create([
+                        'photo' => $photoPath
+                    ]);
+                }
+            }
+        });
+
+        return redirect()->route('hotels.index');
     }
 
     /**

@@ -33,6 +33,8 @@ Route::middleware('auth')->group(function () {
         Route::middleware(['can:manage hotels'])->group(function () {
             Route::resource('hotels', HotelController::class);
             Route::get('hotels/{hotel:slug}', [HotelController::class, 'show'])->name('hotel_manage.show');
+            Route::get('hotels/{hotel:slug}/edit', [HotelController::class, 'edit'])->name('hotel_manage.edit');
+            Route::put('hotels/{hotel:slug}/store', [HotelController::class, 'update'])->name('hotel_manage.store');
         });
 
         Route::middleware(['can:manage hotels'])->group(function () {
